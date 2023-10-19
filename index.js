@@ -63,6 +63,12 @@ async function run() {
       const doc = req.body;
       const result = await brands.insertOne(doc);
       res.send(result)
+      console.log(doc);
+    })
+
+    app.get('/brands', async(req, res)=>{
+      const cursor = await brands.find().toArray()
+      res.send(cursor)
     })
 
 
