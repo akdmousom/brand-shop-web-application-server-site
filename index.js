@@ -40,6 +40,7 @@ async function run() {
     const users = database.collection("users"); 
     const brands = database.collection("brands"); 
     const products = database.collection("products"); 
+    const addToCart = database.collection("addToCart"); 
 
 
   try {
@@ -90,6 +91,18 @@ async function run() {
       const cursor = await products.find().toArray();
       res.send(cursor)
     })
+
+    app.get('/product-details/:id', async(req,res)=>{
+      const id = req.params.id;
+      const cursor = await products.findOne(new ObjectId(id))
+      res.send(cursor)
+    })
+
+    app.post('/add-to-cart', async(req,res) => {
+      const doc = req.body;
+      const result = await addToCart.insertOne(doc);
+      res.send(result);
+    } )
 
 
 
