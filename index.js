@@ -23,7 +23,7 @@ app.get('/', (req,res)=>{
 // Database connection 
 
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = `mongodb+srv://${process.env.USER_NAME}:${process.env.USER_PASSWORD}@cluster0.chkrm7d.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -39,6 +39,7 @@ async function run() {
     const database = client.db("brand-shop");
     const users = database.collection("users"); 
     const brands = database.collection("brands"); 
+    const products = database.collection("products"); 
 
 
   try {
@@ -63,12 +64,26 @@ async function run() {
       const doc = req.body;
       const result = await brands.insertOne(doc);
       res.send(result)
-      console.log(doc);
+     
     })
 
     app.get('/brands', async(req, res)=>{
       const cursor = await brands.find().toArray()
       res.send(cursor)
+    })
+
+    app.get('/single-brands/:id', async(req,res)=>{
+      const id = req.params.id;
+      const cursor = await brands.findOne(new ObjectId(id))
+      res.send(cursor)
+      console.log(id);
+    })
+
+    app.post('/products', async (req, res) => {
+      const doc = req.body;
+      const result = await products.insertOne(doc)
+      res.send(result)
+      
     })
 
 
