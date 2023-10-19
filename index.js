@@ -7,6 +7,10 @@ require('dotenv').config();
 // Initialize App
 const app = express();
 
+// middleware
+app.use(cors());
+app.use(express.json())
+
 
 
 // App EndPoint
@@ -34,6 +38,7 @@ const client = new MongoClient(uri, {
 async function run() {
     const database = client.db("brand-shop");
     const users = database.collection("users"); 
+    const brands = database.collection("brands"); 
 
 
   try {
@@ -51,6 +56,13 @@ async function run() {
         const doc = req.body;
         const result = await users.insertOne(doc)
         res.send(result)
+        
+    })
+
+    app.post('/brands', async (req, res)=> {
+      const doc = req.body;
+      const result = await brands.insertOne(doc);
+      res.send(result)
     })
 
 
