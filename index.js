@@ -86,6 +86,11 @@ async function run() {
       
     })
 
+    app.get('/products', async(req, res)=> {
+      const cursor = await products.find().toArray();
+      res.send(cursor)
+    })
+
 
 
 
