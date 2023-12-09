@@ -2,14 +2,23 @@
 const express = require('express');
 const cors = require('cors');
 const port = process.env.PORT || 5000;
+
+const jwt = require('jsonwebtoken')
 require('dotenv').config();
 
 // Initialize App
 const app = express();
 
 // middleware
-app.use(cors());
+
+app.use(cors({
+  origin: ['http://localhost:5173'],
+  credentials: true
+}));
 app.use(express.json())
+
+
+
 
 
 
@@ -24,6 +33,7 @@ app.get('/', (req, res) => {
 
 
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const cookieParser = require('cookie-parser');
 const uri = `mongodb+srv://${process.env.USER_NAME}:${process.env.USER_PASSWORD}@cluster0.chkrm7d.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -42,7 +52,18 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     // await client.connect();
 
-
+    app.post('/jwt', async (req,res)=>{
+      const user = req.body;
+      const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {expiresIn: 60 * 60})
+      console.log(user);
+      res
+      .cookie('token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production', 
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+      })
+      .send({success: true})
+    })
 
 
 
